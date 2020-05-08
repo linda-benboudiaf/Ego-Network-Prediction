@@ -1,12 +1,16 @@
-# Load train dataset
 from igraph import *
 from collections import *
+import random
 
 class DataReader(object):
-    """ Data reading and spliting """
 
-    def __init__(self, graph):
+    """ Data reading and spliting to Train, Validation and Test """
+
+    def __init__(self, graph, fluxTr,fluxV, fluxTest):
         self.graph = graph
+        self.fluxV = fluxV
+        self.fluxTr = fluxTr
+        self.fluxTest = fluxTest
 
     def addVertex(self, _nodeName):
         try:
@@ -21,27 +25,69 @@ class DataReader(object):
 
 
     def LoadData(self):
-        fileIndex=[0]
+        #fileIndex=[0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980] #All Egos id for edges.
+        fileIndex = [3980]
         for i, egoId in enumerate(fileIndex):
-            print(egoId)
             path = "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/edges/"+str(egoId)+".edges"
-            print('File path =', path)
-            flux = open(path,'r')
-            nodeID=egoId
+            flux = open(path, 'r')
             line=flux.readline()
             while(line!=''):
-                res = (line.split()) #will have an array of strings.
+                res = (line.split()) # Will have an array of strings.
                 self.addVertex(res[1]) # Adding nodes to the self.graph.
                 self.addVertex(res[0])
-                print('Adding vertex and edges to:  ',res[0],'<-->',res[1])
                 self.graph.add_edge(res[0],res[1])
                 line=flux.readline() #line ++ read next line.
         self.graph.simplify()
-        print(self.graph)
         return
+
+    def WriteTupleToFile(self, Ftrain,t):
+        string=str(t[0])+' '+str(t[1])+'\n'
+        Ftrain.write(string)
+
+    def getEdgeName(self,t):
+        a = (self.graph.vs[t[0]]['name'],self.graph.vs[t[1]]['name'])
+        return a
+
+    # Generate Train File 80%
+    def GenerateTrain(self):
+        fluxTrain = open(self.fluxTr, 'a+')
+        for i in range(int(len(self.graph.es) * 0.5)):
+            # self.graph.es number of edges.
+            ran = random.randint(0, len(self.graph.es)-1) #Generate random number endpoints included.
+            tup = self.graph.es[ran].tuple
+            self.graph.delete_edges(tup)
+            self.WriteTupleToFile(fluxTrain, self.getEdgeName(tup))
+        fluxTrain.close()
+
+    # Generate test file 20%
+    def GenerateTest(self):
+        fluxTest = open(self.fluxTest, 'a+')
+        for i in range (int(len(self.graph.es)*0.25)):
+            ran = random.randint(0, len(self.graph.es)-1)
+            tup = self.graph.es[ran].tuple
+            self.graph.delete_edges(tup)
+            self.WriteTupleToFile(fluxTest, self.getEdgeName(tup))
+        fluxTest.close()
+
+   # Generate Validation file 20%
+    def GenerateValidation(self):
+        fluxVal = open(self.fluxV, 'a+')
+        for i in range(int(len(self.graph.es)*0.15)):
+            ran = random.randint(0,len(self.graph.es)-1)
+            tup = self.graph.es[ran].tuple
+            self.graph.delete_edges(tup)
+            self.WriteTupleToFile(fluxVal, self.getEdgeName(tup))
+        fluxVal.close()
+
 
 
 if __name__ == '__main__':
-    o = DataReader(Graph())
+    o = DataReader(Graph(),
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges")
+
     print(o.__doc__)
     o.LoadData()
+    o.GenerateTrain()
+    o.GenerateTest()
