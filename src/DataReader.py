@@ -17,8 +17,8 @@ class DataReader(object):
             if(_nodeName not in self.graph.vs['name']):
                 #print('Inserting vertex to self.graph',name_str)
                 self.graph.add_vertex(name = _nodeName)
-            else:
-                print('Vertex exists already at index: ',self.graph.vs.find(_nodeName).index)
+            #else:
+            #    print('Vertex exists already at index: ',self.graph.vs.find(_nodeName).index)
         except KeyError:
             self.graph.add_vertex(name =_nodeName)
         return self.graph
@@ -80,14 +80,13 @@ class DataReader(object):
         fluxVal.close()
 
 
-
 if __name__ == '__main__':
+    print(o.__doc__)
     o = DataReader(Graph(),
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges")
-
-    print(o.__doc__)
     o.LoadData()
     o.GenerateTrain()
     o.GenerateTest()
+    o.GenerateValidation()
