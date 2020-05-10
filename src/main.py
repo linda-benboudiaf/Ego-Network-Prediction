@@ -26,12 +26,12 @@ if not sys.warnoptions:
 def main():
     # Centrality for graph representation.
     centrality = Centrality.Centrality(Graph(),
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+                    "../FacebookNetwork/dataset/SplitedData/train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/test.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_test.edges")
 
     centrality.arg.LoadEdgesData()
     betweenness = centrality.BetweenCentrality()
@@ -40,33 +40,33 @@ def main():
 
     #PredictionModels, Split positive and negative data
     pos_train = DataReader.DataReader(Graph(),
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+                    "../FacebookNetwork/dataset/SplitedData/train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/test.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_test.edges")
     neg_train = DataReader.DataReader(Graph(),
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+                    "../FacebookNetwork/dataset/SplitedData/train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/test.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_test.edges")
     pos_val = DataReader.DataReader(Graph(),
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+                    "../FacebookNetwork/dataset/SplitedData/train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/test.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_test.edges")
     neg_val = DataReader.DataReader(Graph(),
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+                    "../FacebookNetwork/dataset/SplitedData/train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/test.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "../FacebookNetwork/dataset/SplitedData/neg_test.edges")
 
     #Load Edges for each graph
     pos_train.LoadEdgesData()
@@ -180,7 +180,7 @@ def main():
 
     accuracy = [] #We agregate the Accuracy averages for 18 neighbors.
     f1_scores = [] #Metrics ...
-    index = range(3,39)
+    index = range(3,81)
     for i in index:
         classifier = KNeighborsClassifier(n_neighbors = i, metric= 'euclidean', weights='uniform', leaf_size= 30) #27 classifiers
         classifier.fit(X_train, y_train)
@@ -207,7 +207,7 @@ def main():
     plt.xlabel('K Values')
     plt.ylabel('Accuracy average')
     plt.show()
-    
+
     #LoadLabels.
     nodesLabels = []
     edges = []
