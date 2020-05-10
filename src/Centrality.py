@@ -7,8 +7,8 @@ class Centrality(object):
     """ In this class we will define Betweenness,
         Eigen & Closeness centrality. """
 
-    def __init__(self, g, pTr, pVal, pTest):
-        self.arg = DataReader.DataReader(g, pTr, pVal, pTest)
+    def __init__(self, g, pTr, pVal, pTest, pTr_neg, pVal_neg, pTest_neg):
+        self.arg = DataReader.DataReader(g, pTr, pVal, pTest, pTr_neg, pVal_neg, pTest_neg)
 
     def BetweenCentrality(self):
         bfs = self.arg.graph.betweenness(self.arg.graph.vs) # BFS taking vertex as parameter.
@@ -47,8 +47,11 @@ if __name__ == '__main__':
     o = Centrality(Graph(),
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/train.edges",
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/val.edges",
-                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges")
-    o.arg.LoadData() #Initialiser la données.
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/test.edges",
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_train.edges",
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
+                    "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
+    o.arg.LoadEdgesData() #Initialiser la données.
     o.BetweenCentrality()
     o.ClosenessCentrality()
     o.DegreeCentrality()

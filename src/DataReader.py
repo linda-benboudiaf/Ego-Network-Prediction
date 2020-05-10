@@ -5,7 +5,7 @@ import numpy as np
 
 class DataReader(object):
 
-    """ Data reading and spliting to Train, Validation and Test """
+    """ Data reading, labeling and  spliting to Train, Validation and Test """
 
     def __init__(self,graph, fluxTr,fluxV, fluxTest, fluxTr_neg, fluxVal_neg, fluxTest_neg):
         self.graph = graph
@@ -26,7 +26,7 @@ class DataReader(object):
 
     def LoadEdgesData(self):
         #fileIndex=[0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980] #All Egos id for edges.
-        fileIndex = [0]
+        fileIndex = [3980]
         for egoId in fileIndex:
             path = "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/edges/"+str(egoId)+".edges"
             flux = open(path)
@@ -41,6 +41,8 @@ class DataReader(object):
         return
 
     def LoadGeneratedFiles(self, path):
+        print("Loading Generated Files ----> Train Validation Pos & Neg ")
+        print("---------------------------------------------------------")
         flux = open(path)
         line=flux.readline()
         while(line!=''):
@@ -55,7 +57,9 @@ class DataReader(object):
     # Load features on dictionnary
     def LoadFeaturesData(self):
         #fileIndex = [0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980]
-        fileIndex = [0]
+        fileIndex = [3980]
+        print("Loading features into dictionnary for Ego "+str(fileIndex[0]))
+        print("---------------------------------------------------------")
         feats = dict()
         for i in fileIndex:
             path = '/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/feat/'+str(i)+'.feat'
@@ -63,6 +67,19 @@ class DataReader(object):
             for f in flux :
                 feats[f[0]] = np.asarray(f[1:])
         return feats
+
+    def LabelData(self):
+        _labledList = []
+        _features = self.LoadFeaturesData()
+        for et in self.graph.es:
+            _tupName = self.getEdgeName(et.tuple)
+            try:
+                label = np.add(_features[np.float64(_tupName[0])],_features[np.float64(_tupName[1])])
+                _labledList.append(label)
+                pass
+            except Exception as e:
+                pass
+        return np.asarray(_labledList)
 
     def WriteTupleToFile(self, Ftrain,t):
         string=str(t[0])+' '+str(t[1])+'\n'
@@ -82,7 +99,7 @@ class DataReader(object):
                 if(value == 0 and i!=j):
                     count+=1;
                     pool.append((i,j))
-        print('Count of negative sample: ', count)
+        print('Pool count to generate negative samples: ', count)
         for e in pool:
             if(e[0] == 0):
                 pool.remove(e)
@@ -149,9 +166,11 @@ if __name__ == '__main__':
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
     print(o.__doc__)
-    o.LoadFeaturesData()
-    o.LoadGeneratedFiles(o.fluxTr_neg)
     o.LoadEdgesData()
+    o.LabelData()
+    o.LoadGeneratedFiles(o.fluxTr_neg)
+    exit()
+    o.LoadFeaturesData()
     o.GenerateTrain()
     o.GenerateTest()
     o.GenerateNegative()
