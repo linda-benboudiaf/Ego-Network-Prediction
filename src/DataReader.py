@@ -1,6 +1,7 @@
 from igraph import *
 from collections import *
 import random
+import numpy as np
 
 class DataReader(object):
 
@@ -18,19 +19,15 @@ class DataReader(object):
     def addVertex(self, _nodeName):
         try:
             if(_nodeName not in self.graph.vs['name']):
-                #print('Inserting vertex to self.graph',name_str)
                 self.graph.add_vertex(name = _nodeName)
-            #else:
-            #    print('Vertex exists already at index: ',self.graph.vs.find(_nodeName).index)
         except KeyError:
             self.graph.add_vertex(name =_nodeName)
         return self.graph
 
-
     def LoadEdgesData(self):
         #fileIndex=[0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980] #All Egos id for edges.
         fileIndex = [0]
-        for i, egoId in enumerate(fileIndex):
+        for egoId in fileIndex:
             path = "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/edges/"+str(egoId)+".edges"
             flux = open(path)
             line=flux.readline()
@@ -43,27 +40,37 @@ class DataReader(object):
         self.graph.simplify()
         return
 
-    def LoadGeneratedFiles(self):
-        file=[0]
-        for i, a in enumerate(file):
-            f=open(file)
+    def LoadGeneratedFiles(self, path):
+        flux = open(path)
+        line=flux.readline()
+        while(line!=''):
+            char = (line.split())
+            self.addVertex(char[0])
+            self.addVertex(char[1])
+            self.graph.add_edge(char[0],char[1])
             line=flux.readline()
-            while(line!=''):
-                char = (line.split())
-                self.addVertex(g,c[0])
-                self.addVertex(g,c[1])
-                self.graph.add_edge(c[0],c[1])
-                line=flux.readline()
-        g.simplify()
+        self.graph.simplify()
         return
+
+    # Load features on dictionnary
+    def LoadFeaturesData(self):
+        #fileIndex = [0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980]
+        fileIndex = [0]
+        feats = dict()
+        for i in fileIndex:
+            path = '/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/feat/'+str(i)+'.feat'
+            flux = np.loadtxt(path)
+            for f in flux :
+                feats[f[0]] = np.asarray(f[1:])
+        return feats
 
     def WriteTupleToFile(self, Ftrain,t):
         string=str(t[0])+' '+str(t[1])+'\n'
         Ftrain.write(string)
 
     def getEdgeName(self,t):
-        a = (self.graph.vs[t[0]]['name'],self.graph.vs[t[1]]['name'])
-        return a
+        edgeName = (self.graph.vs[t[0]]['name'],self.graph.vs[t[1]]['name'])
+        return edgeName
 
     # We generate negative exemples according to graph adjacency
     def GenerateNegative(self):
@@ -77,7 +84,7 @@ class DataReader(object):
                     pool.append((i,j))
         print('Count of negative sample: ', count)
         for e in pool:
-            if(e [0]== 0):
+            if(e[0] == 0):
                 pool.remove(e)
         return pool
 
@@ -142,6 +149,8 @@ if __name__ == '__main__':
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_val.edges",
                     "/home/lbenboudiaf/Bureau/FacebookNetwork/dataset/SplitedData/neg_test.edges")
     print(o.__doc__)
+    o.LoadFeaturesData()
+    o.LoadGeneratedFiles(o.fluxTr_neg)
     o.LoadEdgesData()
     o.GenerateTrain()
     o.GenerateTest()
